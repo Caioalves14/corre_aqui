@@ -21,6 +21,7 @@ import com.example.caio.domain.dto.auth.AuthenticationResponseDTO;
 import com.example.caio.domain.dto.role.UserRoleDTO;
 import com.example.caio.domain.dto.user.UserRequestDTO;
 import com.example.caio.domain.dto.user.UserResponseDTO;
+import com.example.caio.domain.enums.EnumRoles;
 import com.example.caio.infra.exceptions.conflict.UserAlreadyExistsException;
 import com.example.caio.infra.exceptions.notFound.RoleNotFoundException;
 import com.example.caio.model.Role;
@@ -63,33 +64,32 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     @Transactional
-    public UserResponseDTO register(UserRequestDTO user)
-            throws IOException {
+    public UserResponseDTO register(UserRequestDTO user) throws IOException {
         
         List<Role> roles = new ArrayList<>();
-
-        Role role;
-
-
+    
         if (userRepository.existsByLogin(user.getLogin())) {
             throw new UserAlreadyExistsException("User with login " + user.getLogin() + " already exists.");
         }
+    
         for (UserRoleDTO roleDTO : user.getRoles()) {
-            role = rolesRepository.findByEnumRoles(roleDTO.getRoleName())
-                    .orElseThrow(() -> new RoleNotFoundException("Error: Role '"
-                            + roleDTO.getRoleName() + "' not Found."));
+            EnumRoles enumRole = EnumRoles.fromString(roleDTO.getRoleName());
+
+            Role role = rolesRepository.findByEnumRoles(enumRole)
+                    .orElseThrow(() -> new RoleNotFoundException("Error: Role '" + roleDTO.getRoleName() + "' not Found."));
+            
             roles.add(role);
         }
-
+    
         User userSave = User.builder()
                 .login(user.getLogin())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .role(roles)
                 .build();
+        
         User savedUser = userRepository.save(userSave);
         return new UserResponseDTO(savedUser);
     }
-
     
     @Transactional
     public AuthenticationResponseDTO login(AuthenticationRequestDTO a) throws AuthException {
@@ -141,7 +141,5 @@ public class AuthenticationService implements UserDetailsService {
         throw new AuthException("Invalid refresh token.");
     }
 }
-
-
 
 }

@@ -7,9 +7,11 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.example.caio.model.Token;
 
+@Repository
 public interface ITokenRepository extends CrudRepository<Token,UUID> {
 
     List<Token> findAllAccessTokensByUserId(UUID id);

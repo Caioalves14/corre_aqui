@@ -12,9 +12,13 @@ import lombok.NoArgsConstructor;
 public class UserRoleDTO {
 
     @NotBlank
-    private EnumRoles roleName;
+    private String roleName; 
 
     public UserRoleDTO(Role role) {
-        this.roleName = role.getEnumRoles();
+        this.roleName = role.getEnumRoles().getRole();
+    }
+
+    public EnumRoles getRoleEnum() {
+        return EnumRoles.fromString(roleName); 
     }
 }

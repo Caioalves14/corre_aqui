@@ -1,5 +1,7 @@
 package com.example.caio.domain.enums;
 
+import com.example.caio.infra.exceptions.notFound.RoleNotFoundException;
+
 public enum EnumRoles {
 
   ROLE_ADMIN("ROLE_ADMIN"),
@@ -15,11 +17,14 @@ public enum EnumRoles {
   }
 
   public static EnumRoles fromString(String role) {
+    System.out.println("Attempting to find role: '" + role + "'");
     for (EnumRoles r : EnumRoles.values()) {
-        if (r.role.equals(role)) {
+        if (r.role.equalsIgnoreCase(role)) { 
             return r;
         }
     }
-    throw new IllegalArgumentException("Unknown role: " + role);
+    throw new RoleNotFoundException("Error: Role '" + role + "' not Found.");
 }
+
+
 }
