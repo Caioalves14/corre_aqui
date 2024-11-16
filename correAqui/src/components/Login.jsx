@@ -1,47 +1,32 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Logo from "../assets/Logo.jpeg"
 import "./Login.css"
+import api from '../services/api';
 
 const Login = () => {
+  const inputEmail = useRef();
+  const inputSenha = useRef();
 
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+  async function realizarLogin(event) {
+    event.preventDefault();
 
-    const navigate = useNavigate();
+    await api.get('/loja/login', {
+      email: inputEmail.current.value,
+      senha: inputSenha.current.value
+    });
 
-    const handleSubmit = async(e) => {
-        e.preventDefault();
+    const {token} = response.data;
+    localStorage.setItem("authToken", token);
 
-        try {
-            const response = await fetch('', {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ email, senha }),
-            });
-      
-            if (response.ok) {
-              const data = await response.json();
-              alert('Login bem-sucedido!');
-              // Aqui você pode redirecionar o usuário para outra página
-              // ou armazenar o token de autenticação, como:
-              // localStorage.setItem('token', data.token);
-              navigate('/dashboards/src/components/TelaInicial.jsx');
-            } else {
-              const errorData = await response.json();
-              setErrorMessage(errorData.message || 'Erro ao fazer login');
-            }
-          } catch (error) {
-            setErrorMessage('Erro no servidor. Tente novamente mais tarde.');
-          }
-        };
+    alert("Login realizado com sucesso!")
+
+    window.location.href = "/home";
+  }
+    
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
         <div className="main-login">
             <div className="left-login">
                <img src={Logo}/>
@@ -51,13 +36,13 @@ const Login = () => {
                     <h2>Faça login como empresa:</h2>
                     <div className="textfild">
                         <label htmlFor="usuario">Email</label>
-                        <input type="text" id="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required/>
+                        <input type="text" id="email" placeholder="Email" ref={inputEmail} required/>
                     </div>
                     <div className="textfild">
                         <label htmlFor="usuario">Senha</label>
-                        <input type="password" id="senha" placeholder="Senha" onChange={(e)=> setSenha(e.target.value)} required/>
+                        <input type="password" id="senha" placeholder="Senha" ref={inputSenha} required/>
                     </div>
-                    <button className="btn-login" type="submit">Login</button>
+                    <button className="btn-login" onClick={realizarLogin}>Login</button>
                     <a className="cadastro" href="./Cadastro.jsx">
                         <p className="complement">Não possui cadastro?</p>
                     </a>
