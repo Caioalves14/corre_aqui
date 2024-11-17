@@ -32,6 +32,7 @@ public class LojaService {
         lojaRepository.save(loja);
 
         return new LojaGetDto(
+            loja.getId(),
             loja.getNome(),
             loja.getCnpj(),
             loja.getEmail(),
@@ -41,7 +42,7 @@ public class LojaService {
     
     public LojaDeleteDto deletarLoja(LojaDeleteDto lojaDeleteDto){
 
-       Optional<Loja> lojaOptional = lojaRepository.findById(lojaDeleteDto.getCnpj());
+       Optional<Loja> lojaOptional = lojaRepository.findById(lojaDeleteDto.getId());
 
        if (lojaOptional.isPresent()) {
         Loja loja = lojaOptional.get();

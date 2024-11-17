@@ -24,7 +24,7 @@ public class OfertaController {
     private OfertaService ofertaService;
 
     @PostMapping(path = "/criar")
-    public ResponseEntity<OfertaGetDto> criarOferta(@RequestBody OfertaPostDto ofertaPostDto) {
+    public ResponseEntity<OfertaGetDto> criarOfertas(@RequestBody OfertaPostDto ofertaPostDto) {
         OfertaGetDto criarOferta = ofertaService.cadastrarOferta(ofertaPostDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criarOferta);
     }

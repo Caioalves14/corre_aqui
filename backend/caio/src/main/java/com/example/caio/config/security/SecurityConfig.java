@@ -57,6 +57,8 @@ public class SecurityConfig {
                                "/swagger-ui.html",
                                "/h2-console/**" 
                        ).permitAll()
+                       .requestMatchers("/api/oferta/criar").permitAll()
+                       .requestMatchers("/api/loja/cadastro").permitAll()
                        .anyRequest().authenticated())
                .sessionManagement(session -> session
                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

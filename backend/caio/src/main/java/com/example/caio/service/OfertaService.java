@@ -31,8 +31,8 @@ public class OfertaService {
 
         return new OfertaGetDto(
             oferta.getId(),
-            oferta.getImagem(),
             oferta.getNomeProduto(),
+            oferta.getImagem(),
             oferta.getPreco()
         );
     }

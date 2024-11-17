@@ -1,5 +1,7 @@
 package com.example.caio.domain.dto.lojas;
 
+import java.util.UUID;
+
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LojaPostDto {
 
+    private UUID id;
     private String nome;
-    @Id
-    private double cnpj;
+    private String cnpj;
     private String email;
     private String senha;
 }
