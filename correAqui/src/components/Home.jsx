@@ -1,53 +1,90 @@
 import React, {useState, useRef} from 'react'
 import api from '../services/api'
 import './Home.css'
+import supabase from '../supabase';
 import Logo from "../assets/Logo.jpeg"
-import {initializeApp } from 'firebase/app';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Home = () => {
   const [ofertas, setOfertas] = useState([]);
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDsf3-8dBxDXM-N8lBT-z9O7-J5DArlDQc",
-    authDomain: "uploadimage-aab89.firebaseapp.com",
-    projectId: "uploadimage-aab89",
-    storageBucket: "uploadimage-aab89.firebasestorage.app",
-    messagingSenderId: "878945807811",
-    appId: "1:878945807811:web:6941d7d02152cff9e3e176",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const storage = getStorage(app);
-
-  async function uploadImage(file) {
-    const imageRef = ref(storage, `images/${file.name}`);
-    await uploadBytes(imageRef, file);
-    return getDownloadURL(imageRef);
-  }
 
   const inputNomeProduto = useRef();
   const inputPreco = useRef();
   const inputImagem = useRef();
 
-  async function cadastrarOferta() {
+  async function uploadImagem(file) {
+    try {
+      const fileName = `${Date.now()}_${file.name}`;
+
+      const {data, error} = await supabase.storage
+      .from('uploads')
+      .upload(`produtos/${fileName}`, file);
+
+      if(error){
+        throw error;
+      }
+
+      const { data: publicUrlData, error: PublicUrlError } = supabase.storage
+      .from('uploads')
+      .getPublicUrl(`produtos/${fileName}`);
+
+      if(PublicUrlError){
+        throw PublicUrlError;
+      }
+
+      return publicUrlData.publicUrl;
+    }catch(error) {
+      console.error("Error ao fazer o upload da imagem!", error.message);
+      throw error;
+    }
+  }
+ 
+  async function cadastrarOferta(e) {
+    e.preventDefault();
+
     try {
       const file = inputImagem.current.files[0];
-      const imageURL = await uploadImage(file);
+      if (!file){
+        alert("Por favor, selecione uma imagem para o produto!");
+        return;
+      }
 
+      const imagemUrl = await uploadImagem(file);
 
       await api.post('/oferta/criar', {
         nomeProduto: inputNomeProduto.current.value,
         preco : inputPreco.current.value,
-        imagem: inputImagem.current.value,
-      })
-    } catch (erro) {
-      console.error("Erro ao cadastrar oferta:", error);
+        imagem: imagemUrl,
+      });
+
+      alert("Oferta cadastrada com sucesso!");
+
+      inputNomeProduto.current.value = "";
+      inputPreco.current.value = "";
+      inputImagem.current.value = "";
+
+    } catch (error) {
+      console.error("Erro ao cadastrar oferta:", error.message);
+      alert("Erro ao cadastrar a oferta tente novamente")
+
     }
 
   }
+
+  async function buscarOfertas() {
+    try {
+      const response = await api.get('/ofertas');
+      setOfertas(response.data);
+    }catch (error){
+      console.error("Erro ao buscar ofertas:", error.message)
+    }
+  }
+
+  React.useEffect(() => {
+    buscarOfertas();
+  }, []);
+
   return (
-      <form>
+      <form onSubmit={cadastrarOferta}>
         <div className='main-ofertas'>
           <div className='left-ofertas'>
             {ofertas.map(oferta => (
@@ -57,7 +94,7 @@ const Home = () => {
                 <p>Preço: {oferta.preco}</p>
                 <div className='imagem'>
                   <p>Imagem:</p>
-                  <img src={Logo} alt="imagem-produto" />
+                  <img src={oferta.imagem || Logo} alt="imagem-produto" />
                 </div>
               </div>
             </div>
@@ -78,7 +115,7 @@ const Home = () => {
                   <label htmlFor="usuario">Faça o upload da imagem do seu produto:</label>
                   <input type="file" id='imagem' placeholder='Adicione a foto do seu produto' ref={inputImagem} required/>
                 </div>
-                <button className="btn-cadastro" onClick={cadastrarOferta}>Cadastrar oferta</button>
+                <button type='submit' className="btn-cadastro">Cadastrar oferta</button>
               </div>
           </div>
         </div>
