@@ -1,0 +1,19 @@
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "login": "usuario",
+  "password": "senha123",
+  "roles": [
+    {
+      "roleName": "ROLE_ADMIN"
+    },
+    {
+      "roleName": "ROLE_USER"
+    }
+  ]
+}
+
+#  "roles": "ROLE_ADMIN" "ROLE_USER"
+  
+
