@@ -2,7 +2,6 @@ package com.example.caio.domain.dto.lojas;
 
 import java.util.UUID;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

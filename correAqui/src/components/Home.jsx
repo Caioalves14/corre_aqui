@@ -40,35 +40,42 @@ const Home = () => {
  
   async function cadastrarOferta(e) {
     e.preventDefault();
-
+  
     try {
       const file = inputImagem.current.files[0];
-      if (!file){
+      if (!file) {
         alert("Por favor, selecione uma imagem para o produto!");
         return;
       }
-
+  
       const imagemUrl = await uploadImagem(file);
-
-      await api.post('/oferta/criar', {
+  
+      // Printando a URL e o corpo da requisição para verificar se está tudo correto
+      const requestData = {
         nomeProduto: inputNomeProduto.current.value,
-        preco : inputPreco.current.value,
+        preco: inputPreco.current.value,
         imagem: imagemUrl,
-      });
-
+      };
+  
+      console.log("URL da requisição:", '/oferta/criar');
+      console.log("Dados enviados:", requestData);
+  
+      // Agora enviando a requisição POST
+      await api.post('/oferta/criar', requestData);
+  
       alert("Oferta cadastrada com sucesso!");
-
+  
+      // Limpando os campos
       inputNomeProduto.current.value = "";
       inputPreco.current.value = "";
       inputImagem.current.value = "";
-
+  
     } catch (error) {
       console.error("Erro ao cadastrar oferta:", error.message);
-      alert("Erro ao cadastrar a oferta tente novamente")
-
+      alert("Erro ao cadastrar a oferta, tente novamente");
     }
-
   }
+  
 
   async function buscarOfertas() {
     try {
