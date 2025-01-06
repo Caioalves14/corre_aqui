@@ -1,5 +1,7 @@
 package com.example.caio.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import com.example.caio.domain.dto.ofertas.OfertaPostDto;
 import com.example.caio.service.OfertaService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -34,5 +37,12 @@ public class OfertaController {
         ofertaService.deletarOferta(ofertaDeleteDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping(path = "/ofertas")
+    public ResponseEntity<List<OfertaGetDto>> buscarTodasOfertas() {
+        List<OfertaGetDto> ofertas = ofertaService.getAllofertas();
+        return ResponseEntity.ok(ofertas);
+    }
+
     
 }

@@ -58,6 +58,7 @@ public class SecurityConfig {
                                "/h2-console/**" 
                        ).permitAll()
                        .requestMatchers("/api/oferta/criar").permitAll()
+                       .requestMatchers("/api/oferta/ofertas").permitAll()
                        .requestMatchers("/api/loja/cadastro").permitAll()
                        .anyRequest().authenticated())
                .sessionManagement(session -> session

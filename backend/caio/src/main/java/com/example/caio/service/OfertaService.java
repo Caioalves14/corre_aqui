@@ -1,6 +1,8 @@
 package com.example.caio.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,5 +50,20 @@ public class OfertaService {
             throw new EntityNotFoundException("Loja com o ID" + ofertaDeleteDto.getId() + "não foi encontrada");
         }
     }
+
+    public List<OfertaGetDto> getAllofertas() {
+        List<Oferta> ofertas = iOfertaRepository.findAll();
+        System.out.println("Ofertas encontradas: " + ofertas);
+    
+        return ofertas.stream()
+                      .map(oferta -> new OfertaGetDto(
+                          oferta.getId(),
+                          oferta.getNomeProduto(),
+                          oferta.getImagem(),
+                          oferta.getPreco()
+                      ))
+                      .collect(Collectors.toList());
+    }
+    
 
 }

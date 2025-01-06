@@ -79,7 +79,7 @@ const Home = () => {
 
   async function buscarOfertas() {
     try {
-      const response = await api.get('/ofertas');
+      const response = await api.get('oferta/ofertas');
       setOfertas(response.data);
     }catch (error){
       console.error("Erro ao buscar ofertas:", error.message)
